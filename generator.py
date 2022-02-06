@@ -5,6 +5,7 @@ import numpy as np
 
 
 class Generator(object):
+    # decimal places (for printed output)
     DP = 3
 
     def __init__(
@@ -27,6 +28,7 @@ class Generator(object):
 class GoldenGenerator(Generator):
     """Generator for subtomograms"""
 
+    # golden ratio
     PHI = 0.5 * (1 + np.sqrt(5))
 
     def __init__(
@@ -35,18 +37,67 @@ class GoldenGenerator(Generator):
         projections_per_subtomogram: int,
         full_circle: bool = True,
         degrees: bool = True,
-        wrap: bool = False,
     ):
         super().__init__(
             subtomograms, projections_per_subtomogram, full_circle, degrees
         )
-        self.wrap = wrap
-        print(self.PHI)
 
     def generate_angles(self):
         i_vec = np.arange(self.total_projections)
-        theta_vec = (self.PHI * np.pi * i_vec) % np.pi
-        print(theta_vec)
+        p_vec = i_vec + 1
+        self.angles = (self.PHI * 0.5 * self.full_circle * i_vec) % self.total_angle
+        print(np.c_[p_vec, np.round(self.angles, self.DP)])
+
+    def generate_subscans(self):
+        # matrix of (i, j) tuples
+        matrix = np.array([[(i, j) for j in range(self.N)] for i in range(self.M)])
+
+        # vector for N
+        vector = np.array([self.N, 1])
+        self.subscans = (
+            np.dot(matrix, vector) * self.PHI * 0.5 * self.full_circle
+        ) % self.total_angle
+
+    def sort_subscans(self):
+        try:
+            self.subscans.shape
+        except AttributeError:
+            self.generate_subscans()
+
+        self.subscans.sort()
+
+    def calculate_diffs(self):
+        try:
+            self.subscans.shape
+        except AttributeError:
+            self.generate_subscans()
+
+        self.sort_subscans()
+        self.subscan_diffs = np.diff(self.subscans)
+
+    def calculate_entropy(self):
+        try:
+            self.subscan_diffs
+        except AttributeError:
+            self.calculate_diffs()
+
+        # get the histogram of the diffs
+        hist = np.histogram(self.subscan_diffs)
+
+        # strip zeros and get the discrete PDF
+        pdf = hist[0][hist[0] != 0] / hist[0].sum()
+
+        # calculate information entropy for each bin
+        h = pdf * np.log(pdf)
+
+        # strip nan (arising from 0 histogram bins) and sum to get entropy
+        self.H = -h.sum()
+
+        return self.H
+
+
+def entropy(i_vec, M=50):
+    return np.vectorize(lambda n: GoldenGenerator(M, n).calculate_entropy())(i_vec)
 
 
 class BinaryGenerator(Generator):
