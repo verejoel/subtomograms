@@ -22,7 +22,7 @@ class Generator(object):
         self.total_angle = self.full_circle if full_circle else 0.5 * self.full_circle
 
 
-class GoldenRatio(Generator):
+class GoldenGenerator(Generator):
     """Generator for subtomograms"""
 
     PHI = 0.5 * (1 + np.sqrt(5))
@@ -87,7 +87,16 @@ class BinaryGenerator(Generator):
             j = np.arange(self.N)
             angles = self.psi_d * (self.A[i] / self.M + j)
             self.angles[i] = angles
-        print(self.angles)
+
+    def print_angles(self):
+        try:
+            (len(self.angles))
+        except AttributeError:
+            self.generate_angles()
+
+        print(f"Subtomogram\tAngles")
+        for k, v in self.angles.items():
+            print(f"{k}\t\t{v}")
 
 
 # calculate step size within each subtomogram
