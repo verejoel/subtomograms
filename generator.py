@@ -5,6 +5,8 @@ import numpy as np
 
 
 class Generator(object):
+    DP = 3
+
     def __init__(
         self,
         subtomograms: int,
@@ -96,7 +98,7 @@ class BinaryGenerator(Generator):
 
         print(f"Subtomogram\tAngles")
         for k, v in self.angles.items():
-            print(f"{k}\t\t{v}")
+            print(f"{k}\t\t{np.round(v, self.DP)}")
 
 
 # calculate step size within each subtomogram
