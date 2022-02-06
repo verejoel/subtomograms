@@ -1,27 +1,27 @@
 # Subtomograms
 This repository implements the Binary Decomposition and Golden Ratio strategies for performing computed tomography of
-dynamic processes described in Kaestner A. __et al.__ Optical Engineering **50**(12), 123201 (December 2011) [https://doi.org/10.1117/1.3660298].
+dynamic processes described in Kaestner A. __et al.__ Optical Engineering **50**(12), 123201 (December 2011) (https://doi.org/10.1117/1.3660298).
 
-# Installation
+## Installation
 Currently only working as a local import. Make sure you run python from the same directory as this repo.
 ```bash
 $ git clone git@github.com:verejoel/subtomograms.git
 $ cd subtomograms
 ```
 
-## Create a Virtual Environment
+### Create a Virtual Environment
 Do this according to your favourite manager (`direnv`, `pyenv`, `pipenv`). For plain python:
 ```bash
 $ python -m venv ./venv
 $ source venv/bin/activate
 ```
 
-## Install dependencies
+### Install dependencies
 ```bash
 $ pip install -r requirements.txt
 ```
 
-# Usage
+## Usage
 **Note: you may need to use `python3` instead of `python`, depending on your system.
 Start a python interpreter session:
 ```bash
@@ -35,7 +35,7 @@ In the interactive session, first import the Generator classes:
 
 You can now use the `GoldenGenerator` and `BinaryGenerator` classes to build subtomograms.
 
-## Binary Decomposition
+### Binary Decomposition
 To use binary decomposition, initialise an object in the following way:
 ```python
 >>> bg = BinaryGenerator(4, 10)
